@@ -27,7 +27,7 @@ stages:
       prId: "realmasterapp"
       prefix: ''
   jobs:
-    - deployment: 'Deploy_On_Production'
+    - deployment: 'Deploy_Resource_Group_To_Production'
       pool:
         vmImage: 'windows-latest'
       continueOnError: false
