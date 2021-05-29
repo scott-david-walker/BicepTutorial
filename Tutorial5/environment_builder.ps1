@@ -1,4 +1,4 @@
-param([string]$envName, [string]$prefix=""))
+param([string]$envName, [string]$prefix="")
 $bicepFile = './main.bicep'
 
 az group create -l westeurope -n $envName
