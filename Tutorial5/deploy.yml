@@ -39,9 +39,9 @@ stages:
             - task: AzureCLI@2
               displayName: 'Setup Azure environment'
               inputs:
-                workingDirectory: '$(Pipeline.Workspace)/scripts'
+                workingDirectory: '$(Pipeline.Workspace)/scripts/Tutorial5'
                 azureSubscription: 'Playground'
                 scriptType: 'pscore'
                 scriptLocation: 'scriptPath'
-                scriptPath: '$(Pipeline.Workspace)/scripts/environment_builder.ps1'
+                scriptPath: '$(Pipeline.Workspace)/scripts/Tutorial5/environment_builder.ps1'
                 arguments: '-envName $(prId) -prefix "$(prefix)"'
