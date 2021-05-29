@@ -1,0 +1,47 @@
+
+trigger:
+- master
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs: 
+    - job: Build
+      steps: 
+      - task: PublishPipelineArtifact@1
+        displayName: 'publish environment script'
+        inputs:
+          targetPath: ''
+          artifact: 'scripts'
+          publishLocation: 'pipeline'
+
+- stage: DeployToProduction
+  displayName: 'Deploy To Production'
+  condition: succeeded('Build')
+  dependsOn: Build
+  variables:
+    ${{ if ne(variables['Build.SourceBranchName'], 'master')}}:
+      prId: "$(System.PullRequest.PullRequestId)"
+      prefix: '$(System.PullRequest.PullRequestId)'
+    ${{ if eq(variables['Build.SourceBranchName'], 'master')}}:
+      prId: "realmasterapp"
+      prefix: ''
+  jobs:
+    - deployment: 'Deploy_On_Production'
+      pool:
+        vmImage: 'windows-latest'
+      continueOnError: false
+      environment: 'scottenv'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureCLI@2
+              displayName: 'Setup Azure environment'
+              inputs:
+                workingDirectory: '$(Pipeline.Workspace)/scripts'
+                azureSubscription: 'Playground'
+                scriptType: 'pscore'
+                scriptLocation: 'scriptPath'
+                scriptPath: '$(Pipeline.Workspace)/scripts/environment_builder.ps1'
+                arguments: '-envName $(prId) -prefix "$(prefix)"'
